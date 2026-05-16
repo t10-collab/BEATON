@@ -1,108 +1,107 @@
 :root {
-    --fog-grey: #e2e8f0;
-    --deep-grey: #475569;
-    --point-red: #ff4757;
-    --point-blue: #1e90ff;
-    --point-orange: #ffa502;
+    --fog-bg: #f2f4f7;
+    --fog-card: #ffffff;
+    --fog-border: #d1d9e6;
+    --fog-text: #4a5568;
+    --kick: #ff5e57;
+    --snare: #3498db;
+    --hihat: #f1c40f;
 }
 
 body {
-    background-color: var(--fog-grey);
-    font-family: 'Pretendard', sans-serif;
+    background-color: var(--fog-bg);
+    color: var(--fog-text);
+    font-family: 'Malgun Gothic', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
     margin: 0;
-    color: var(--deep-grey);
 }
 
-.app-container {
-    background: #ffffff;
-    padding: 2.5rem;
-    border-radius: 24px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+.app-window {
+    background: var(--fog-card);
     width: 90%;
-    max-width: 700px;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 10px 10px 20px #bebebe, -10px -10px 20px #ffffff;
     text-align: center;
 }
 
-.note-selector {
-    margin: 20px 0;
+.status-bar {
+    background: #edf2f7;
+    padding: 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.selection-area {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.note-picker, .instrument-picker {
     display: flex;
     justify-content: center;
     gap: 10px;
 }
 
-.note-btn {
-    padding: 10px 15px;
-    border: 2px solid #cbd5e1;
-    background: white;
-    border-radius: 8px;
+button {
     cursor: pointer;
-    transition: 0.2s;
-}
-
-.note-btn.active {
-    background: var(--deep-grey);
-    color: white;
-    border-color: var(--deep-grey);
-}
-
-.instrument-pad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.pad {
-    padding: 15px;
     border: none;
-    border-radius: 12px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 8px;
 }
 
-.k { background: var(--point-red); }
-.s { background: var(--point-blue); }
-.h { background: var(--point-orange); }
+.note-btn {
+    padding: 10px 20px;
+    background: #e2e8f0;
+}
 
-.slots-container {
+.note-btn.active { background: var(--fog-text); color: white; }
+
+.inst-btn { padding: 12px; color: white; font-weight: bold; opacity: 0.6; }
+.inst-btn.active { opacity: 1; transform: scale(1.05); }
+.k { background: var(--kick); }
+.s { background: var(--snare); }
+.h { background: var(--hihat); }
+
+.grid-container {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    gap: 8px;
-    background: #f1f5f9;
-    padding: 15px;
+    gap: 5px;
+    margin-bottom: 30px;
+    padding: 10px;
+    background: #e2e8f0;
     border-radius: 12px;
-    margin-bottom: 25px;
 }
 
 .slot {
-    aspect-ratio: 1/1;
-    border: 2px dashed #cbd5e1;
-    border-radius: 8px;
+    height: 60px;
+    background: white;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
-    background: white;
-    cursor: pointer;
+    font-size: 12px;
+    color: #cbd5e0;
 }
 
-.slot.occupied { border-style: solid; color: white; }
-.slot.k { background: var(--point-red); }
-.slot.s { background: var(--point-blue); }
-.slot.h { background: var(--point-orange); }
-.slot.disabled { background: #f8fafc; cursor: default; }
+.slot.filled { color: white; font-weight: bold; border: none; }
+.slot.k { background: var(--kick); }
+.slot.s { background: var(--snare); }
+.slot.h { background: var(--hihat); }
 
-.controls button {
-    padding: 12px 25px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
+.action-buttons button {
+    padding: 15px 30px;
+    font-size: 16px;
     font-weight: bold;
+    margin: 5px;
 }
 
-.primary-btn { background: #2ed573; color: white; margin-right: 10px; }
+.btn-primary { background: #2ecc71; color: white; }
+.btn-secondary { background: #95a5a6; color: white; }
