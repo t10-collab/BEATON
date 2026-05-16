@@ -1,0 +1,83 @@
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+}
+
+.instrument-pad {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.pad {
+    padding: 20px;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.pad:active { transform: scale(0.95); }
+.k { background: #ff4757; } /* Red */
+.s { background: #1e90ff; } /* Blue */
+.h { background: #ffa502; } /* Orange */
+
+.sequencer {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+}
+
+.slots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.slot {
+    width: 60px;
+    height: 60px;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.slot.active-k { background: #ff4757; color: white; border-style: solid; }
+.slot.active-s { background: #1e90ff; color: white; border-style: solid; }
+.slot.active-h { background: #ffa502; color: white; border-style: solid; }
+
+.controls button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    margin: 5px;
+}
+
+#playBtn { background: #2ed573; color: white; }
+#resetBtn { background: #ced4da; }
