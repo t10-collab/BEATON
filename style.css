@@ -1,14 +1,27 @@
 :root {
-    --fog-grey: #e5e7eb;
-    --dark-grey: #374151;
-    --accent-blue: #3b82f6;
-    --white: #ffffff;
+    /* 파스텔 팔레트 */
+    --bg-pastel: #fdfbfb;         /* 전체 배경 (부드러운 흰색) */
+    --card-bg: #ffffff;
+    --text-main: #5a6268;
+    
+    /* 리듬 요소별 색상 */
+    --color-4n: #ffb7b2;          /* 4분음표 (파스텔 레드) */
+    --color-4r: #ffdac1;          /* 4분쉼표 (파스텔 오렌지) */
+    --color-8-8: #e2f0cb;         /* 8분음표 2개 (파스텔 그린) */
+    --color-8n: #b5ead7;          /* 8분음표 1개 (파스텔 민트) */
+    --color-8r: #c7ceea;          /* 8분쉼표 (파스텔 블루) */
+    --color-16n: #e0bbe4;         /* 16분음표 4개 (파스텔 퍼플) */
+    
+    --accent-gold: #ffcf4d;
+    --btn-play: #95d5b2;
+    --btn-reset: #f08080;
 }
 
 body {
-    background-color: var(--fog-grey);
-    color: var(--dark-grey);
-    font-family: 'Malgun Gothic', sans-serif;
+    background-color: var(--bg-pastel);
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    color: var(--text-main);
+    font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
     margin: 0;
     display: flex;
     justify-content: center;
@@ -17,15 +30,29 @@ body {
 }
 
 .container {
-    background: var(--white);
-    padding: 30px;
-    border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
     width: 90%;
-    max-width: 800px;
+    max-width: 850px;
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+header h1 {
+    font-size: 2rem;
+    color: #6d8299;
+    margin-bottom: 5px;
+}
+
+.tempo-info {
+    font-weight: bold;
+    color: #a0aec0;
+    margin-bottom: 25px;
+}
+
+/* 음표 선택 도구 영역 */
 .note-palette {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -34,70 +61,111 @@ body {
 }
 
 .note-item {
-    background: #f9fafb;
-    border: 2px solid #d1d5db;
-    border-radius: 12px;
-    padding: 15px;
+    border: none;
+    border-radius: 20px;
+    padding: 20px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .note-item:hover {
-    background: #eff6ff;
-    border-color: var(--accent-blue);
-    transform: translateY(-3px);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
 }
+
+/* 버튼별 배경색 지정 */
+.note-item[data-type="4"] { background-color: var(--color-4n); }
+.note-item[data-type="4r"] { background-color: var(--color-4r); }
+.note-item[data-type="8-8"] { background-color: var(--color-8-8); }
+.note-item[data-type="8"] { background-color: var(--color-8n); }
+.note-item[data-type="8r"] { background-color: var(--color-8r); }
+.note-item[data-type="16"] { background-color: var(--color-16n); }
 
 .note-img {
-    font-size: 3rem; /* 음표 크기 확대 */
-    margin-bottom: 5px;
+    font-size: 3.5rem; /* 음표 크기 더 크게 */
+    color: #444;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
 }
 
+.note-item span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(0,0,0,0.5);
+}
+
+/* 리듬 창작판 영역 */
 .workspace-section {
     margin: 40px 0;
-    padding: 20px;
-    background: #f3f4f6;
-    border-radius: 15px;
-    min-height: 150px;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 25px;
+    min-height: 180px;
+    border: 2px dashed #e2e8f0;
+}
+
+.beat-counter {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #718096;
+    margin-bottom: 20px;
 }
 
 .rhythm-board {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
-    margin-top: 15px;
 }
 
-/* 창작판에 들어간 음표 스타일 */
+/* 배치된 음표 스타일 */
 .placed-note {
     background: var(--white);
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: 2px solid var(--dark-grey);
-    font-size: 2.5rem;
-    animation: popIn 0.3s ease;
+    padding: 15px 25px;
+    border-radius: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    border: 3px solid transparent;
 }
 
-@keyframes popIn {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+/* 재생 시 하이라이트 애니메이션 */
+.playing {
+    border-color: var(--accent-gold) !important;
+    background-color: #fff9e6 !important;
+    transform: scale(1.1);
+    transition: all 0.1s;
+}
+
+/* 컨트롤 버튼 */
+.controls {
+    margin-top: 20px;
 }
 
 .btn {
-    padding: 15px 30px;
+    padding: 18px 40px;
     font-size: 1.1rem;
     font-weight: bold;
     border: none;
-    border-radius: 10px;
+    border-radius: 50px; /* 둥근 버튼 */
     cursor: pointer;
     margin: 0 10px;
+    transition: all 0.2s;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-.play { background: #10b981; color: white; }
-.reset { background: #ef4444; color: white; }
+.play { background: var(--btn-play); box-shadow: 0 4px 15px rgba(149, 213, 178, 0.4); }
+.play:hover { background: #81c7a1; }
 
-.playing {
-    border: 3px solid #10b981 !important;
-    background: #ecfdf5 !important;
-}
+.reset { background: var(--btn-reset); box-shadow: 0 4px 15px rgba(240, 128, 128, 0.4); }
+.reset:hover { background: #e57373; }
+
+.btn:active { transform: scale(0.95); }
