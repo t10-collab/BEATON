@@ -1,83 +1,108 @@
+:root {
+    --fog-grey: #e2e8f0;
+    --deep-grey: #475569;
+    --point-red: #ff4757;
+    --point-blue: #1e90ff;
+    --point-orange: #ffa502;
+}
+
 body {
+    background-color: var(--fog-grey);
     font-family: 'Pretendard', sans-serif;
-    background-color: #f0f2f5;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    color: var(--deep-grey);
 }
 
-.container {
-    background: white;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    text-align: center;
+.app-container {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     width: 90%;
-    max-width: 500px;
+    max-width: 700px;
+    text-align: center;
+}
+
+.note-selector {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.note-btn {
+    padding: 10px 15px;
+    border: 2px solid #cbd5e1;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.note-btn.active {
+    background: var(--deep-grey);
+    color: white;
+    border-color: var(--deep-grey);
 }
 
 .instrument-pad {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin: 20px 0;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
 .pad {
-    padding: 20px;
+    padding: 15px;
     border: none;
     border-radius: 12px;
     color: white;
     font-weight: bold;
     cursor: pointer;
-    transition: transform 0.1s;
 }
 
-.pad:active { transform: scale(0.95); }
-.k { background: #ff4757; } /* Red */
-.s { background: #1e90ff; } /* Blue */
-.h { background: #ffa502; } /* Orange */
+.k { background: var(--point-red); }
+.s { background: var(--point-blue); }
+.h { background: var(--point-orange); }
 
-.sequencer {
-    margin-top: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 15px;
-}
-
-.slots {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
+.slots-container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 25px;
 }
 
 .slot {
-    width: 60px;
-    height: 60px;
-    border: 2px dashed #ccc;
+    aspect-ratio: 1/1;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    font-size: 0.8rem;
+    background: white;
+    cursor: pointer;
+}
+
+.slot.occupied { border-style: solid; color: white; }
+.slot.k { background: var(--point-red); }
+.slot.s { background: var(--point-blue); }
+.slot.h { background: var(--point-orange); }
+.slot.disabled { background: #f8fafc; cursor: default; }
+
+.controls button {
+    padding: 12px 25px;
+    border-radius: 10px;
+    border: none;
     cursor: pointer;
     font-weight: bold;
 }
 
-.slot.active-k { background: #ff4757; color: white; border-style: solid; }
-.slot.active-s { background: #1e90ff; color: white; border-style: solid; }
-.slot.active-h { background: #ffa502; color: white; border-style: solid; }
-
-.controls button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    margin: 5px;
-}
-
-#playBtn { background: #2ed573; color: white; }
-#resetBtn { background: #ced4da; }
+.primary-btn { background: #2ed573; color: white; margin-right: 10px; }
