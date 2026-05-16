@@ -1,111 +1,84 @@
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const rhythmBoard = document.getElementById('rhythm-board');
-const currentBeatsDisplay = document.getElementById('current-beats');
-
-let createdRhythm = []; // 선택된 리듬 저장
+let sequence = [];
 let totalBeats = 0;
-const TEMPO = 88;
-const BEAT_DURATION = 60 / TEMPO; // 1박당 시간 (초)
+const BPM = 88;
+const BEAT_TIME = 60 / BPM; // 1박자 길이(초)
 
-// 1. 소리 생성 (우드블럭 느낌)
-function playClick(frequency = 440, duration = 0.1) {
+function playTick(freq, startTime, duration) {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-    
-    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-    
+    osc.frequency.setValueAtTime(freq, startTime);
+    gain.gain.setValueAtTime(0.5, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-    
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
 }
 
-// 2. 리듬 요소 선택 이벤트
 document.querySelectorAll('.note-item').forEach(item => {
-    item.addEventListener('click', () => {
+    item.onclick = () => {
+        const len = parseFloat(item.dataset.len);
+        if (totalBeats + len > 4.001) return alert("4박자를 넘길 수 없어요!");
+
         const type = item.dataset.type;
-        const beats = parseFloat(item.dataset.beats);
         const icon = item.querySelector('.note-img').innerText;
-
-        if (totalBeats + beats > 4.1) { // 4/4박자 초과 방지
-            alert("4박자를 초과할 수 없습니다!");
-            return;
-        }
-
-        totalBeats += beats;
-        createdRhythm.push({ type, beats, icon });
         
-        renderRhythm();
-        currentBeatsDisplay.innerText = totalBeats;
-    });
+        sequence.push({ type, len, icon });
+        totalBeats += len;
+        render();
+    };
 });
 
-// 3. 화면 그리기
-function renderRhythm() {
-    rhythmBoard.innerHTML = '';
-    createdRhythm.forEach((item, index) => {
+function render() {
+    const container = document.getElementById('rhythm-sequence');
+    container.innerHTML = '';
+    sequence.forEach((note, i) => {
         const div = document.createElement('div');
         div.className = 'placed-note';
-        div.id = `note-${index}`;
-        div.innerText = item.icon;
-        rhythmBoard.appendChild(div);
+        div.id = `note-${i}`;
+        div.innerText = note.icon;
+        container.appendChild(div);
     });
+    document.getElementById('remaining-beats').innerText = (4 - totalBeats).toFixed(1);
 }
 
-// 4. 연주 로직
 async function playRhythm() {
-    if (createdRhythm.length === 0) return;
-    
-    const playBtn = document.getElementById('playBtn');
-    playBtn.disabled = true;
+    if (sequence.length === 0) return;
+    const btn = document.getElementById('playBtn');
+    btn.disabled = true;
 
-    for (let i = 0; i < createdRhythm.length; i++) {
-        const item = createdRhythm[i];
-        const element = document.getElementById(`note-${i}`);
+    let now = audioCtx.currentTime;
+
+    for (let i = 0; i < sequence.length; i++) {
+        const note = sequence[i];
+        const el = document.getElementById(`note-${i}`);
         
-        // 시각적 강조
-        element.classList.add('playing');
+        // 시각적 피드백 (setTimeout으로 처리)
+        setTimeout(() => el.classList.add('active-note'), (now - audioCtx.currentTime) * 1000);
 
-        // 소리 발생 (쉼표는 소리 없음)
-        if (item.type === '4') {
-            playClick(440, 0.1); // 4분음표
-        } else if (item.type === '8-8') {
-            playClick(440, 0.05);
-            await new Promise(r => setTimeout(r, (BEAT_DURATION / 2) * 1000));
-            playClick(440, 0.05);
-            await new Promise(r => setTimeout(r, (BEAT_DURATION / 2) * 1000));
-            element.classList.remove('playing');
-            continue;
-        } else if (item.type === '8') {
-            playClick(440, 0.05);
-        } else if (item.type === '16') {
-            for(let j=0; j<4; j++) {
-                playClick(550, 0.03);
-                await new Promise(r => setTimeout(r, (BEAT_DURATION / 4) * 1000));
-            }
-            element.classList.remove('playing');
-            continue;
+        if (note.type === '4') {
+            playTick(440, now, 0.1);
+        } else if (note.type === '8-8') {
+            playTick(440, now, 0.05);
+            playTick(440, now + (BEAT_TIME / 2), 0.05);
+        } else if (note.type === '8') {
+            playTick(440, now, 0.05);
+        } else if (note.type === '16-16') {
+            playTick(550, now, 0.03);
+            playTick(550, now + (BEAT_TIME / 4), 0.03);
         }
 
-        // 박자만큼 대기
-        await new Promise(r => setTimeout(r, item.beats * BEAT_DURATION * 1000));
-        element.classList.remove('playing');
+        now += note.len * BEAT_TIME;
+        setTimeout(() => el.classList.remove('active-note'), (now - audioCtx.currentTime) * 1000);
+        
+        await new Promise(r => setTimeout(r, note.len * BEAT_TIME * 1000));
     }
-
-    playBtn.disabled = false;
+    btn.disabled = false;
 }
 
-// 5. 초기화
-document.getElementById('resetBtn').onclick = () => {
-    createdRhythm = [];
-    totalBeats = 0;
-    rhythmBoard.innerHTML = '';
-    currentBeatsDisplay.innerText = '0';
-};
-
 document.getElementById('playBtn').onclick = playRhythm;
+document.getElementById('resetBtn').onclick = () => {
+    sequence = []; totalBeats = 0; render();
+};
