@@ -1,85 +1,111 @@
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let selectedNote = { type: '4n', len: 4 }; // 16분음표 4개 길이
-let sequence = new Array(16).fill(null); // 총 16칸 (2마디)
+const rhythmBoard = document.getElementById('rhythm-board');
+const currentBeatsDisplay = document.getElementById('current-beats');
 
-// 가상 드럼 소리 (하이햇/스네어 대용)
-function playSound(isRest) {
-    if (isRest) return;
+let createdRhythm = []; // 선택된 리듬 저장
+let totalBeats = 0;
+const TEMPO = 88;
+const BEAT_DURATION = 60 / TEMPO; // 1박당 시간 (초)
+
+// 1. 소리 생성 (우드블럭 느낌)
+function playClick(frequency = 440, duration = 0.1) {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+    
+    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
 }
 
-// 그리드 생성
-function initGrid() {
-    const grids = [document.getElementById('grid-m1'), document.getElementById('grid-m2')];
-    grids.forEach((g, mIdx) => {
-        for (let i = 0; i < 8; i++) {
-            const slot = document.createElement('div');
-            slot.className = 'slot';
-            slot.id = `slot-${mIdx * 8 + i}`;
-            slot.onclick = () => addNote(mIdx * 8 + i);
-            g.appendChild(slot);
+// 2. 리듬 요소 선택 이벤트
+document.querySelectorAll('.note-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const type = item.dataset.type;
+        const beats = parseFloat(item.dataset.beats);
+        const icon = item.querySelector('.note-img').innerText;
+
+        if (totalBeats + beats > 4.1) { // 4/4박자 초과 방지
+            alert("4박자를 초과할 수 없습니다!");
+            return;
         }
+
+        totalBeats += beats;
+        createdRhythm.push({ type, beats, icon });
+        
+        renderRhythm();
+        currentBeatsDisplay.innerText = totalBeats;
+    });
+});
+
+// 3. 화면 그리기
+function renderRhythm() {
+    rhythmBoard.innerHTML = '';
+    createdRhythm.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'placed-note';
+        div.id = `note-${index}`;
+        div.innerText = item.icon;
+        rhythmBoard.appendChild(div);
     });
 }
 
-// 음표 선택 이벤트
-document.querySelectorAll('.note-item').forEach(btn => {
-    btn.onclick = () => {
-        document.querySelectorAll('.note-item').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedNote = { type: btn.dataset.type, len: parseInt(btn.dataset.len) };
-    };
-});
+// 4. 연주 로직
+async function playRhythm() {
+    if (createdRhythm.length === 0) return;
+    
+    const playBtn = document.getElementById('playBtn');
+    playBtn.disabled = true;
 
-function addNote(index) {
-    if (index + selectedNote.len > 16) {
-        alert("박자가 마디를 넘어갑니다!"); return;
-    }
-    // 기존 데이터 삭제 후 삽입
-    for(let i=0; i < selectedNote.len; i++) sequence[index + i] = 'skip';
-    sequence[index] = { ...selectedNote };
-    render();
-}
-
-function render() {
-    for (let i = 0; i < 16; i++) {
-        const el = document.getElementById(`slot-${i}`);
-        el.className = 'slot'; el.innerText = '';
-        if (sequence[i] && sequence[i] !== 'skip') {
-            for(let j=0; j<sequence[i].len; j++) {
-                const target = document.getElementById(`slot-${i+j}`);
-                target.classList.add(sequence[i].type.includes('r') ? 'rest' : 'filled');
-                if(j === 0) target.innerText = sequence[i].type;
-            }
-        }
-    }
-}
-
-async function play() {
-    const bpm = document.getElementById('bpm').value;
-    const stepTime = (60 / bpm) / 4 * 1000; // 16분음표 기준 시간
-
-    for (let i = 0; i < 16; i++) {
-        const el = document.getElementById(`slot-${i}`);
-        el.style.border = "2px solid red";
+    for (let i = 0; i < createdRhythm.length; i++) {
+        const item = createdRhythm[i];
+        const element = document.getElementById(`note-${i}`);
         
-        if (sequence[i] && sequence[i] !== 'skip') {
-            const isRest = sequence[i].type.includes('r');
-            playSound(isRest);
+        // 시각적 강조
+        element.classList.add('playing');
+
+        // 소리 발생 (쉼표는 소리 없음)
+        if (item.type === '4') {
+            playClick(440, 0.1); // 4분음표
+        } else if (item.type === '8-8') {
+            playClick(440, 0.05);
+            await new Promise(r => setTimeout(r, (BEAT_DURATION / 2) * 1000));
+            playClick(440, 0.05);
+            await new Promise(r => setTimeout(r, (BEAT_DURATION / 2) * 1000));
+            element.classList.remove('playing');
+            continue;
+        } else if (item.type === '8') {
+            playClick(440, 0.05);
+        } else if (item.type === '16') {
+            for(let j=0; j<4; j++) {
+                playClick(550, 0.03);
+                await new Promise(r => setTimeout(r, (BEAT_DURATION / 4) * 1000));
+            }
+            element.classList.remove('playing');
+            continue;
         }
-        await new Promise(r => setTimeout(r, stepTime));
-        el.style.border = "none";
+
+        // 박자만큼 대기
+        await new Promise(r => setTimeout(r, item.beats * BEAT_DURATION * 1000));
+        element.classList.remove('playing');
     }
+
+    playBtn.disabled = false;
 }
 
-document.getElementById('bpm').oninput = (e) => document.getElementById('bpm-val').innerText = e.target.value;
-document.getElementById('play-btn').onclick = play;
-document.getElementById('reset-btn').onclick = () => { sequence.fill(null); render(); };
+// 5. 초기화
+document.getElementById('resetBtn').onclick = () => {
+    createdRhythm = [];
+    totalBeats = 0;
+    rhythmBoard.innerHTML = '';
+    currentBeatsDisplay.innerText = '0';
+};
 
-initGrid();
+document.getElementById('playBtn').onclick = playRhythm;
