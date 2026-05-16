@@ -3,42 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🥁 2마디 리듬 창작실</title>
+    <title>🥁 리듬 창작소 (Tempo 88)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <div class="container">
         <header>
-            <h1>🎶 2마디 리듬 창작 수업</h1>
-            <div class="tempo-control">
-                <label for="bpm">Tempo: <span id="bpm-val">88</span> BPM</label>
-                <input type="range" id="bpm" min="60" max="140" value="88">
-            </div>
+            <h1>🎶 4/4박자 리듬 창작 도구</h1>
+            <div class="tempo-info">현재 속도: ♩ = 88</div>
         </header>
 
-        <section class="note-palette">
-            <h3>음표 선택 (클릭 후 슬롯 선택)</h3>
-            <div class="note-btns">
-                <button class="note-item" data-type="4n" data-len="4">♩ (4분)</button>
-                <button class="note-item" data-type="4r" data-len="4">𝄽 (4쉼)</button>
-                <button class="note-item" data-type="8n2" data-len="4">♫ (8분×2)</button>
-                <button class="note-item" data-type="8n1" data-len="2">♪ (8분×1)</button>
-                <button class="note-item" data-type="8r" data-len="2">𝄾 (8쉼)</button>
-                <button class="note-item" data-type="16n4" data-len="4">♬ (16분×4)</button>
-            </div>
-        </section>
+        <div class="note-palette">
+            <button class="note-item" data-type="4" data-beats="1">
+                <div class="note-img">♩</div>
+                <span>4분음표</span>
+            </button>
+            <button class="note-item" data-type="4r" data-beats="1">
+                <div class="note-img">𝄽</div>
+                <span>4분쉼표</span>
+            </button>
+            <button class="note-item" data-type="8-8" data-beats="1">
+                <div class="note-img">♫</div>
+                <span>8분음표 2개</span>
+            </button>
+            <button class="note-item" data-type="8" data-beats="0.5">
+                <div class="note-img">♪</div>
+                <span>8분음표 1개</span>
+            </button>
+            <button class="note-item" data-type="8r" data-beats="0.5">
+                <div class="note-img">𝄾</div>
+                <span>8분쉼표</span>
+            </button>
+            <button class="note-item" data-type="16" data-beats="1">
+                <div class="note-img">♬</div>
+                <span>16분음표 4개</span>
+            </button>
+        </div>
 
-        <section class="composition-area">
-            <h3>나만의 리듬 마디 (총 2마디)</h3>
-            <div class="measure-label">1마디</div>
-            <div class="grid" id="grid-m1"></div>
-            <div class="measure-label">2마디</div>
-            <div class="grid" id="grid-m2"></div>
-        </section>
+        <div class="workspace-section">
+            <div class="beat-counter">박자 충전: <span id="current-beats">0</span> / 4 박</div>
+            <div id="rhythm-board" class="rhythm-board">
+                </div>
+        </div>
 
         <div class="controls">
-            <button id="play-btn" class="main-btn">▶️ 리듬 연주하기</button>
-            <button id="reset-btn">🔄 전부 지우기</button>
+            <button id="playBtn" class="btn play">▶️ 리듬 연주하기</button>
+            <button id="resetBtn" class="btn reset">🔄 다시 만들기</button>
         </div>
     </div>
     <script src="script.js"></script>
