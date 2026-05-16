@@ -2,36 +2,35 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🥁 4/4박자 리듬 메이커</title>
+    <title>🥁 리듬 메이커 - 중2 음악</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-window">
         <header>
-            <h1>🥁 두근두근 드럼 기초</h1>
-            <p>음표를 선택하고 슬롯을 클릭하여 리듬을 완성하세요!</p>
+            <h1>🥁 4/4박자 리듬 스튜디오</h1>
+            <div class="status-bar">남은 박자: <span id="remaining-beats">8</span> / 8 (8분음표 기준)</div>
         </header>
 
-        <div class="note-selector">
-            <button class="note-btn active" data-type="4n">♩ (4분)</button>
-            <button class="note-btn" data-type="4n.">♩. (점4분)</button>
-            <button class="note-btn" data-type="8n">♪ (8분)</button>
+        <div class="selection-area">
+            <div class="note-picker">
+                <button class="note-btn active" data-len="2">♩ (4분)</button>
+                <button class="note-btn" data-len="3">♩. (점4분)</button>
+                <button class="note-btn" data-len="1">♪ (8분)</button>
+            </div>
+            <div class="instrument-picker">
+                <button class="inst-btn k active" data-inst="kick">KICK (쿵)</button>
+                <button class="inst-btn s" data-inst="snare">SNARE (팍)</button>
+                <button class="inst-btn h" data-inst="hihat">HI-HAT (칫)</button>
+            </div>
         </div>
 
-        <div class="instrument-pad">
-            <button class="pad k" id="kickPad">KICK (쿵)</button>
-            <button class="pad s" id="snarePad">SNARE (팍)</button>
-            <button class="pad h" id="hihatPad">HI-HAT (칫)</button>
-        </div>
+        <div class="grid-container" id="grid">
+            </div>
 
-        <div class="sequencer-board">
-            <div class="slots-container" id="slotsContainer">
-                </div>
-        </div>
-
-        <div class="controls">
-            <button id="playBtn" class="primary-btn">▶️ 재생하기</button>
-            <button id="resetBtn">🔄 초기화</button>
+        <div class="action-buttons">
+            <button id="play-btn" class="btn-primary">▶️ 리듬 연주</button>
+            <button id="reset-btn" class="btn-secondary">🔄 다시 만들기</button>
         </div>
     </div>
     <script src="script.js"></script>
