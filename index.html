@@ -2,33 +2,36 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🥁 중2 음악 - 즐거운 드럼 기초</title>
+    <title>🥁 4/4박자 리듬 메이커</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🥁 두근두근 드럼 기초 (1-2차시)</h1>
-        <p class="desc">아래의 악기를 클릭해 소리를 듣고, 리듬 슬롯을 채워보세요!</p>
+    <div class="app-container">
+        <header>
+            <h1>🥁 두근두근 드럼 기초</h1>
+            <p>음표를 선택하고 슬롯을 클릭하여 리듬을 완성하세요!</p>
+        </header>
 
-        <div class="instrument-pad">
-            <button class="pad k" onclick="playSound('kick')">KICK (쿵)</button>
-            <button class="pad s" onclick="playSound('snare')">SNARE (팍)</button>
-            <button class="pad h" onclick="playSound('hihat')">HI-HAT (칫)</button>
+        <div class="note-selector">
+            <button class="note-btn active" data-type="4n">♩ (4분)</button>
+            <button class="note-btn" data-type="4n.">♩. (점4분)</button>
+            <button class="note-btn" data-type="8n">♪ (8분)</button>
         </div>
 
-        <div class="sequencer">
-            <h3>나만의 4박자 리듬 만들기</h3>
-            <div class="slots">
-                <div class="slot" onclick="setSlot(0)">1</div>
-                <div class="slot" onclick="setSlot(1)">2</div>
-                <div class="slot" onclick="setSlot(2)">3</div>
-                <div class="slot" onclick="setSlot(3)">4</div>
-            </div>
-            <div class="controls">
-                <button id="playBtn" onclick="playSequence()">▶️ 재생하기</button>
-                <button id="resetBtn" onclick="resetSequence()">🔄 초기화</button>
-            </div>
+        <div class="instrument-pad">
+            <button class="pad k" id="kickPad">KICK (쿵)</button>
+            <button class="pad s" id="snarePad">SNARE (팍)</button>
+            <button class="pad h" id="hihatPad">HI-HAT (칫)</button>
+        </div>
+
+        <div class="sequencer-board">
+            <div class="slots-container" id="slotsContainer">
+                </div>
+        </div>
+
+        <div class="controls">
+            <button id="playBtn" class="primary-btn">▶️ 재생하기</button>
+            <button id="resetBtn">🔄 초기화</button>
         </div>
     </div>
     <script src="script.js"></script>
