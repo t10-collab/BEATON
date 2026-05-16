@@ -1,107 +1,73 @@
 :root {
-    --fog-bg: #f2f4f7;
-    --fog-card: #ffffff;
-    --fog-border: #d1d9e6;
-    --fog-text: #4a5568;
-    --kick: #ff5e57;
-    --snare: #3498db;
-    --hihat: #f1c40f;
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --primary: #4a5568;
+    --accent: #3182ce;
+    --slot-empty: #e2e8f0;
 }
 
 body {
-    background-color: var(--fog-bg);
-    color: var(--fog-text);
-    font-family: 'Malgun Gothic', sans-serif;
+    background-color: var(--bg-color);
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    color: var(--primary);
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    padding: 20px;
 }
 
-.app-window {
-    background: var(--fog-card);
-    width: 90%;
-    max-width: 600px;
+.app-container {
+    background: var(--card-bg);
+    max-width: 800px;
+    width: 100%;
     padding: 30px;
     border-radius: 20px;
-    box-shadow: 10px 10px 20px #bebebe, -10px -10px 20px #ffffff;
-    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
-.status-bar {
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+.note-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+.note-item {
+    padding: 15px;
     background: #edf2f7;
-    padding: 8px;
+    border: 2px solid transparent;
     border-radius: 10px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.selection-area {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.note-picker, .instrument-picker {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-button {
     cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-    border-radius: 8px;
+    font-size: 1.1rem;
 }
 
-.note-btn {
-    padding: 10px 20px;
-    background: #e2e8f0;
-}
+.note-item.active { border-color: var(--accent); background: #ebf8ff; }
 
-.note-btn.active { background: var(--fog-text); color: white; }
+.composition-area { margin-top: 30px; }
 
-.inst-btn { padding: 12px; color: white; font-weight: bold; opacity: 0.6; }
-.inst-btn.active { opacity: 1; transform: scale(1.05); }
-.k { background: var(--kick); }
-.s { background: var(--snare); }
-.h { background: var(--hihat); }
-
-.grid-container {
+.grid {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 5px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(8, 1fr); /* 16분음표 8개 기준 */
+    gap: 8px;
+    margin-bottom: 20px;
     padding: 10px;
-    background: #e2e8f0;
+    background: #f8fafc;
     border-radius: 12px;
 }
 
 .slot {
     height: 60px;
-    background: white;
-    border-radius: 6px;
+    background: var(--slot-empty);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    color: #cbd5e0;
-}
-
-.slot.filled { color: white; font-weight: bold; border: none; }
-.slot.k { background: var(--kick); }
-.slot.s { background: var(--snare); }
-.slot.h { background: var(--hihat); }
-
-.action-buttons button {
-    padding: 15px 30px;
-    font-size: 16px;
+    cursor: pointer;
     font-weight: bold;
-    margin: 5px;
+    font-size: 0.9rem;
 }
 
-.btn-primary { background: #2ecc71; color: white; }
-.btn-secondary { background: #95a5a6; color: white; }
+.slot.filled { background: var(--accent); color: white; }
+.slot.rest { background: #cbd5e0; color: #4a5568; }
+
+.controls { margin-top: 30px; text-align: center; }
+
+button { border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+.main-btn { padding: 15px 40px; font-size: 1.2rem; background: var(--accent); color: white; }
+#reset-btn { padding: 15px 20px; background: #a0aec0; color: white; margin-left: 10px; }
