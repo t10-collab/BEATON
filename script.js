@@ -1,100 +1,110 @@
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let selectedNote = '4n'; // 기본 선택: 4분음표
-let selectedInstrument = 'kick';
-const totalSlots = 8;
-let sequence = new Array(totalSlots).fill(null);
+let currentLen = 2; // 기본 4분음표(2칸)
+let currentInst = 'kick';
+let sequence = new Array(8).fill(null); // 8개 슬롯 데이터
 
-// 가상 악기 소리
-function playSound(type) {
+// 가상 사운드 엔진
+function playDrum(inst) {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain); gain.connect(audioCtx.destination);
-
-    if (type === 'kick') {
+    
+    if (inst === 'kick') {
         osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-    } else if (type === 'snare') {
+        osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+    } else if (inst === 'snare') {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(250, audioCtx.currentTime);
-    } else if (type === 'hihat') {
+    } else if (inst === 'hihat') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(8000, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(10000, audioCtx.currentTime);
     }
-    gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
     osc.start(); osc.stop(audioCtx.currentTime + 0.1);
 }
 
-// 초기 슬롯 생성
-const container = document.getElementById('slotsContainer');
-function createSlots() {
-    container.innerHTML = '';
-    for (let i = 0; i < totalSlots; i++) {
+// 초기 화면 구성
+const grid = document.getElementById('grid');
+function initGrid() {
+    grid.innerHTML = '';
+    for(let i=0; i<8; i++) {
         const div = document.createElement('div');
         div.className = 'slot';
+        div.id = `slot-${i}`;
         div.innerText = i + 1;
-        div.onclick = () => addNoteToSequence(i);
-        container.appendChild(div);
+        div.onclick = () => placeNote(i);
+        grid.appendChild(div);
     }
 }
 
-// 음표 선택 이벤트
+// 음표 및 악기 선택 이벤트
 document.querySelectorAll('.note-btn').forEach(btn => {
-    btn.onclick = (e) => {
+    btn.onclick = () => {
         document.querySelectorAll('.note-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        selectedNote = e.target.dataset.type;
+        btn.classList.add('active');
+        currentLen = parseInt(btn.dataset.len);
     };
 });
 
-// 악기 패드 클릭 시 악기 변경 및 소리 확인
-document.getElementById('kickPad').onclick = () => { selectedInstrument = 'kick'; playSound('kick'); };
-document.getElementById('snarePad').onclick = () => { selectedInstrument = 'snare'; playSound('snare'); };
-document.getElementById('hihatPad').onclick = () => { selectedInstrument = 'hihat'; playSound('hihat'); };
+document.querySelectorAll('.inst-btn').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('.inst-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentInst = btn.dataset.inst;
+        playDrum(currentInst);
+    };
+});
 
-// 리듬 배치 로직
-function addNoteToSequence(index) {
-    let duration = 1;
-    if (selectedNote === '4n') duration = 2;
-    else if (selectedNote === '4n.') duration = 3;
-
-    if (index + duration > totalSlots) {
-        alert("박자가 넘어갑니다!"); return;
+// 리듬 배치 logic
+function placeNote(index) {
+    // 1. 해당 칸부터 시작 가능한지 체크
+    if (sequence[index] !== null) return;
+    if (index + currentLen > 8) {
+        alert("박자가 넘어가요!"); return;
     }
 
-    // 기존 데이터 초기화 및 새 데이터 삽입
-    for (let i = index; i < index + duration; i++) sequence[i] = 'skip';
-    sequence[index] = { inst: selectedInstrument, dur: duration };
-    updateUI();
+    // 2. 데이터 저장 (첫 칸에 정보 저장, 나머지 칸은 'skip' 처리)
+    sequence[index] = { inst: currentInst, len: currentLen };
+    for(let i=1; i<currentLen; i++) sequence[index+i] = 'skip';
+
+    render();
 }
 
-function updateUI() {
-    const slots = document.querySelectorAll('.slot');
-    slots.forEach(s => { s.className = 'slot'; s.innerText = ''; });
-
+function render() {
+    let used = 0;
     sequence.forEach((data, i) => {
-        if (data && data !== 'skip') {
-            for (let j = 0; j < data.dur; j++) {
-                slots[i + j].classList.add('occupied', data.inst.charAt(0));
-                if (j === 0) slots[i + j].innerText = data.inst === 'kick' ? '쿵' : data.inst === 'snare' ? '팍' : '칫';
+        const el = document.getElementById(`slot-${i}`);
+        el.className = 'slot';
+        el.innerText = i + 1;
+        if(data && data !== 'skip') {
+            for(let j=0; j<data.len; j++) {
+                const target = document.getElementById(`slot-${i+j}`);
+                target.classList.add('filled', data.inst);
+                target.innerText = (j === 0) ? (data.inst === 'kick' ? '쿵' : data.inst === 'snare' ? '팍' : '칫') : '';
             }
         }
+        if(data) used++;
     });
+    document.getElementById('remaining-beats').innerText = 8 - sequence.filter(x => x !== null).length;
 }
 
-async function playSequence() {
+// 재생 로직 (8분음표 단위로 순회)
+async function playAll() {
     const slots = document.querySelectorAll('.slot');
-    for (let i = 0; i < totalSlots; i++) {
-        slots[i].style.filter = "brightness(1.5)";
-        if (sequence[i] && sequence[i] !== 'skip') {
-            playSound(sequence[i].inst);
+    for(let i=0; i<8; i++) {
+        slots.forEach(s => s.style.border = "none");
+        slots[i].style.border = "2px solid black";
+        
+        if(sequence[i] && sequence[i] !== 'skip') {
+            playDrum(sequence[i].inst);
         }
-        await new Promise(res => setTimeout(res, 250)); // 8분음표 간격 (약 120BPM)
-        slots[i].style.filter = "none";
+        await new Promise(r => setTimeout(r, 300)); // 0.3초 간격
+        slots[i].style.border = "none";
     }
 }
 
-document.getElementById('playBtn').onclick = playSequence;
-document.getElementById('resetBtn').onclick = () => { sequence.fill(null); updateUI(); };
+document.getElementById('play-btn').onclick = playAll;
+document.getElementById('reset-btn').onclick = () => { sequence.fill(null); render(); };
 
-createSlots();
+initGrid();
