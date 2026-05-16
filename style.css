@@ -7,7 +7,109 @@
 }
 
 body {
-    background-color: var(--bg-color);
+    background-colo:root {
+    --fog-grey: #e5e7eb;
+    --dark-grey: #374151;
+    --accent-blue: #3b82f6;
+    --white: #ffffff;
+}
+
+body {
+    background-color: var(--fog-grey);
+    color: var(--dark-grey);
+    font-family: 'Malgun Gothic', sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+}
+
+.note-palette {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.note-item {
+    background: #f9fafb;
+    border: 2px solid #d1d5db;
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.note-item:hover {
+    background: #eff6ff;
+    border-color: var(--accent-blue);
+    transform: translateY(-3px);
+}
+
+.note-img {
+    font-size: 3rem; /* 음표 크기 확대 */
+    margin-bottom: 5px;
+}
+
+.workspace-section {
+    margin: 40px 0;
+    padding: 20px;
+    background: #f3f4f6;
+    border-radius: 15px;
+    min-height: 150px;
+}
+
+.rhythm-board {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+/* 창작판에 들어간 음표 스타일 */
+.placed-note {
+    background: var(--white);
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid var(--dark-grey);
+    font-size: 2.5rem;
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.play { background: #10b981; color: white; }
+.reset { background: #ef4444; color: white; }
+
+.playing {
+    border: 3px solid #10b981 !important;
+    background: #ecfdf5 !important;
+}r: var(--bg-color);
     font-family: 'Pretendard', -apple-system, sans-serif;
     color: var(--primary);
     display: flex;
