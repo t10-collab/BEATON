@@ -16,100 +16,126 @@
 
   <div class="app">
 
+    <!-- 제목 -->
     <header>
-      <h1>🥁 RHYTHM MAKER</h1>
-      <p>4/4박자 리듬 창작 스튜디오</p>
+
+      <div class="logo">
+        🥁
+      </div>
+
+      <div>
+        <h1>RHYTHM MAKER</h1>
+        <p>4/4박자 리듬 창작 스튜디오</p>
+      </div>
+
     </header>
 
     <!-- BPM -->
-    <section class="tempo-section">
-      <label>
-        🎧 BPM :
-        <span id="bpmValue">88</span>
-      </label>
+    <section class="top-section">
 
-      <input
-        type="range"
-        id="tempo"
-        min="50"
-        max="160"
-        value="88"
-      >
+      <div class="bpm-box">
+
+        <label>BPM</label>
+
+        <div class="bpm-number" id="bpmValue">
+          88
+        </div>
+
+        <input
+          type="range"
+          id="tempo"
+          min="50"
+          max="160"
+          value="88"
+        >
+
+      </div>
+
+      <div class="beat-status">
+
+        <span>현재 박자</span>
+
+        <h2 id="beatDisplay">
+          0 / 4
+        </h2>
+
+      </div>
+
     </section>
 
     <!-- 음표 버튼 -->
     <section class="toolbar">
 
-      <button class="note-btn" data-type="quarter">
+      <button class="note-btn purple" data-type="quarter">
         ♩
         <span>4분음표</span>
       </button>
 
-      <button class="note-btn" data-type="quarterRest">
+      <button class="note-btn blue" data-type="quarterRest">
         𝄽
         <span>4분쉼표</span>
       </button>
 
-      <button class="note-btn" data-type="eighthRest">
+      <button class="note-btn cyan" data-type="eighthRest">
         𝄾
         <span>8분쉼표</span>
       </button>
 
-      <button class="note-btn" data-type="eighthSingle">
+      <button class="note-btn green" data-type="eighthSingle">
         ♪
         <span>8분음표 1개</span>
       </button>
 
-      <button class="note-btn" data-type="eighthPair">
+      <button class="note-btn yellow" data-type="eighthPair">
         ♪♪
         <span>8분음표 2개</span>
       </button>
 
-      <button class="note-btn" data-type="sixteenthPair">
+      <button class="note-btn pink" data-type="sixteenthPair">
         ♬
         <span>16분음표 2개</span>
       </button>
 
     </section>
 
-    <!-- 현재 마디 -->
-    <section class="measure-wrap">
+    <!-- 리듬 영역 -->
+    <section class="timeline-wrap">
 
-      <div class="measure-info">
-        <span>현재 박자</span>
-        <span id="beatDisplay">0 / 4</span>
+      <!-- 박자 표시 -->
+      <div class="timeline-top">
+
+        <div>1박</div>
+        <div>2박</div>
+        <div>3박</div>
+        <div>4박</div>
+
       </div>
 
-      <div id="measure" class="measure"></div>
+      <!-- 실제 마디 -->
+      <div class="timeline">
 
-      <!-- 메트로놈 -->
-      <div class="metronome-display">
-
-        <div class="beat-box active" id="beat1">
-          1
+        <!-- 4/4 -->
+        <div class="time-signature">
+          4<br>4
         </div>
 
-        <div class="beat-box" id="beat2">
-          2
-        </div>
+        <!-- 리듬 -->
+        <div id="measure" class="measure">
 
-        <div class="beat-box" id="beat3">
-          3
-        </div>
+          <!-- 재생선 -->
+          <div id="playhead"></div>
 
-        <div class="beat-box" id="beat4">
-          4
         </div>
 
       </div>
 
     </section>
 
-    <!-- 컨트롤 -->
+    <!-- 버튼 -->
     <section class="controls">
 
       <button id="playBtn" class="main-btn play">
-        ▶ 리듬 연주하기
+        ▶ 재생하기
       </button>
 
       <button id="undoBtn" class="main-btn undo">
