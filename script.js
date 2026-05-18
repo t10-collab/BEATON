@@ -31,6 +31,10 @@ let rhythm = [];
 
 let totalBeats = 0;
 
+/* ⭐ 반복재생용 */
+let isPlaying = false;
+let loopInterval = null;
+
 /* 음표 데이터 */
 
 const noteData = {
@@ -235,6 +239,8 @@ clearBtn.addEventListener(
   "click",
   ()=>{
 
+  stopLoop();
+
   rhythm = [];
 
   totalBeats = 0;
@@ -247,22 +253,39 @@ clearBtn.addEventListener(
 
 });
 
-/* 재생 */
+/* =========================
+   반복 재생 함수
+========================= */
 
-playBtn.addEventListener(
-  "click",
-  async ()=>{
-
-  if(rhythm.length === 0){
-
-    alert(
-      "리듬을 먼저 만들어주세요!"
-    );
-
-    return;
-  }
+async function playLoop(){
 
   await Tone.start();
+
+  const bpm =
+    Number(bpmSlider.value);
+
+  const quarterTime =
+    60 / bpm;
+
+  const loopDuration =
+    quarterTime * 4 * 1000;
+
+  playOneMeasure();
+
+  loopInterval =
+    setInterval(()=>{
+
+      playOneMeasure();
+
+    }, loopDuration);
+
+}
+
+/* =========================
+   한 마디 재생
+========================= */
+
+function playOneMeasure(){
 
   const bpm =
     Number(bpmSlider.value);
@@ -331,7 +354,7 @@ playBtn.addEventListener(
 
   }
 
-  /* 리듬 재생 */
+  /* 리듬 */
 
   rhythm.forEach((type,index)=>{
 
@@ -441,6 +464,58 @@ playBtn.addEventListener(
     }
 
   });
+
+}
+
+/* =========================
+   정지
+========================= */
+
+function stopLoop(){
+
+  clearInterval(loopInterval);
+
+  isPlaying = false;
+
+  playBtn.innerHTML =
+    "▶ 재생하기";
+
+}
+
+/* =========================
+   재생 버튼
+========================= */
+
+playBtn.addEventListener(
+  "click",
+  async ()=>{
+
+  if(rhythm.length === 0){
+
+    alert(
+      "리듬을 먼저 만들어주세요!"
+    );
+
+    return;
+  }
+
+  /* 재생중이면 정지 */
+
+  if(isPlaying){
+
+    stopLoop();
+
+    return;
+  }
+
+  /* 반복 재생 시작 */
+
+  isPlaying = true;
+
+  playBtn.innerHTML =
+    "⏹ 정지하기";
+
+  playLoop();
 
 });
 
