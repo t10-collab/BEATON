@@ -2,15 +2,16 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>4/4 리듬 메이커</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RHYTHM MAKER</title>
 
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
 
   <!-- Tone.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
 </head>
+
 <body>
 
   <div class="app">
@@ -20,40 +21,58 @@
       <p>4/4박자 리듬 창작 스튜디오</p>
     </header>
 
+    <!-- BPM -->
     <section class="tempo-section">
-      <label>🎧 BPM : <span id="bpmValue">88</span></label>
-      <input type="range" id="tempo" min="50" max="160" value="88"/>
+      <label>
+        🎧 BPM :
+        <span id="bpmValue">88</span>
+      </label>
+
+      <input
+        type="range"
+        id="tempo"
+        min="50"
+        max="160"
+        value="88"
+      >
     </section>
 
+    <!-- 음표 버튼 -->
     <section class="toolbar">
 
       <button class="note-btn" data-type="quarter">
-        ♩<br>
+        ♩
         <span>4분음표</span>
       </button>
 
       <button class="note-btn" data-type="quarterRest">
-        𝄽<br>
+        𝄽
         <span>4분쉼표</span>
       </button>
 
       <button class="note-btn" data-type="eighthRest">
-        𝄾<br>
+        𝄾
         <span>8분쉼표</span>
       </button>
 
+      <button class="note-btn" data-type="eighthSingle">
+        ♪
+        <span>8분음표 1개</span>
+      </button>
+
       <button class="note-btn" data-type="eighthPair">
-        ♪♪<br>
-        <span>8분음표2개</span>
+        ♪♪
+        <span>8분음표 2개</span>
       </button>
 
       <button class="note-btn" data-type="sixteenthPair">
-        ♬<br>
-        <span>16분음표2개</span>
+        ♬
+        <span>16분음표 2개</span>
       </button>
 
     </section>
 
+    <!-- 현재 마디 -->
     <section class="measure-wrap">
 
       <div class="measure-info">
@@ -63,9 +82,32 @@
 
       <div id="measure" class="measure"></div>
 
+      <!-- 메트로놈 -->
+      <div class="metronome-display">
+
+        <div class="beat-box active" id="beat1">
+          1
+        </div>
+
+        <div class="beat-box" id="beat2">
+          2
+        </div>
+
+        <div class="beat-box" id="beat3">
+          3
+        </div>
+
+        <div class="beat-box" id="beat4">
+          4
+        </div>
+
+      </div>
+
     </section>
 
+    <!-- 컨트롤 -->
     <section class="controls">
+
       <button id="playBtn" class="main-btn play">
         ▶ 리듬 연주하기
       </button>
@@ -77,10 +119,12 @@
       <button id="clearBtn" class="main-btn clear">
         ✖ 전체삭제
       </button>
+
     </section>
 
   </div>
 
   <script src="script.js"></script>
+
 </body>
 </html>
