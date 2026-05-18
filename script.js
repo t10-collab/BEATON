@@ -1,51 +1,60 @@
-// Web Audio API 설정
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let sequence = [];
 let totalBeats = 0;
-let BPM = 88; // 기본 설정 88
+let BPM = 88;
 
-// UI 요소 연결
 const bpmSlider = document.getElementById('bpm-slider');
 const bpmValue = document.getElementById('bpm-value');
-const remainingBeatsDisplay = document.getElementById('remaining-beats');
-const rhythmSequenceContainer = document.getElementById('rhythm-sequence');
+const progressBar = document.getElementById('progress-bar');
 
-// 슬라이더 조작 시 실시간으로 속도 변수 업데이트
 bpmSlider.addEventListener('input', (e) => {
     BPM = parseInt(e.target.value);
     bpmValue.innerText = BPM;
 });
 
-// 주파수 가음원 발생 함수 (리듬 타격음)
-function playTick(freq, startTime, duration) {
+// 프로 수준의 드럼 모델링 사운드 엔진 (쿵, 팍, 칫 분리 레이어링)
+function playDrumSample(type, startTime) {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, startTime);
-    
-    gain.gain.setValueAtTime(0.5, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-    
     osc.connect(gain);
     gain.connect(audioCtx.destination);
-    
+
+    if (type === 'kick') { // 4분음표 계열 (중후한 대북/베이스 드럼 소리)
+        osc.frequency.setValueAtTime(120, startTime);
+        osc.frequency.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+        gain.gain.setValueAtTime(0.8, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+    } 
+    else if (type === 'snare') { // 8분음표 계열 (밝고 타격감 강한 스네어 소리)
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(280, startTime);
+        gain.gain.setValueAtTime(0.6, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.15);
+    } 
+    else if (type === 'hihat') { // 16분음표 계열 (날카롭고 얇은 하이햇 금속성 소리)
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(9000, startTime);
+        gain.gain.setValueAtTime(0.25, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.05);
+    }
+
     osc.start(startTime);
-    osc.stop(startTime + duration);
+    osc.stop(startTime + 0.4);
 }
 
-// 음표 버튼 클릭 시 창작판에 리듬 추가
-document.querySelectorAll('.note-item').forEach(item => {
-    item.onclick = () => {
-        const len = parseFloat(item.dataset.len);
+// 음표 카드 선택 로직
+document.querySelectorAll('.note-card').forEach(card => {
+    card.onclick = () => {
+        const len = parseFloat(card.dataset.len);
         
-        // 4박자(4/4) 규칙 엄격 적용
+        // 4박자 박스 칼같이 제한 연산
         if (totalBeats + len > 4.001) {
-            return alert("4박자를 넘길 수 없습니다! 리듬을 조절해 주세요.");
+            alert("⚠️ 4/4박자의 한 마디(4.0박)를 초과할 수 없습니다!");
+            return;
         }
 
-        const type = item.dataset.type;
-        const icon = item.querySelector('.note-img').innerText;
+        const type = card.dataset.type;
+        const icon = card.querySelector('.note-symbol').innerText;
         
         sequence.push({ type, len, icon });
         totalBeats += len;
@@ -53,27 +62,40 @@ document.querySelectorAll('.note-item').forEach(item => {
     };
 });
 
-// 화면에 리듬 노트들 업데이트
+// 마스터 트랙 렌더링 함수
 function render() {
-    rhythmSequenceContainer.innerHTML = '';
+    const container = document.getElementById('rhythm-sequence');
+    container.innerHTML = '';
+    
     sequence.forEach((note, i) => {
         const div = document.createElement('div');
-        div.className = 'placed-note';
+        div.className = 'placed-card';
         div.id = `note-${i}`;
         div.innerText = note.icon;
-        rhythmSequenceContainer.appendChild(div);
+        container.appendChild(div);
     });
-    // 남은 박수를 소수점 첫째자리까지 표시
-    remainingBeatsDisplay.innerText = (4 - totalBeats).toFixed(1);
+
+    const currentRemaining = (4 - totalBeats).toFixed(1);
+    document.getElementById('remaining-beats').innerText = currentRemaining;
+    
+    // 박자 충전 게이지 연동
+    const fillPercent = (totalBeats / 4) * 100;
+    progressBar.style.width = `${fillPercent}%`;
 }
 
-// 오디오 스케줄링 및 동기식 재생 기능
+// 핵심 리듬 시퀀싱 연주 연동 로직
 async function playRhythm() {
     if (sequence.length === 0) return;
-    const btn = document.getElementById('playBtn');
-    btn.disabled = true;
+    
+    const playBtn = document.getElementById('playBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    
+    // 연주 도중 조작 잠금 처리
+    playBtn.disabled = true;
+    undoBtn.disabled = true;
+    resetBtn.disabled = true;
 
-    // 현재 설정된 BPM 기준 1박자 시간(초) 환산
     const beatTime = 60 / BPM; 
     let now = audioCtx.currentTime;
 
@@ -81,35 +103,44 @@ async function playRhythm() {
         const note = sequence[i];
         const el = document.getElementById(`note-${i}`);
         
-        // 사운드가 시작되는 정확한 타이밍에 노란색 시각 피드백 추가
-        setTimeout(() => el.classList.add('active-note'), (now - audioCtx.currentTime) * 1000);
+        // 시각적 강조 피드백 스케줄링
+        setTimeout(() => el.classList.add('beat-active'), (now - audioCtx.currentTime) * 1000);
 
+        // 음표 타입에 따른 개별 타격 사운드 레이어 매핑
         if (note.type === '4') {
-            playTick(440, now, 0.1); // 기본 타격음
-        } else if (note.type === '8') {
-            playTick(440, now, 0.05); // 8분음표 1개 짧게
+            playDrumSample('kick', now);
         } else if (note.type === '8-8') {
-            playTick(440, now, 0.05); // 첫 번째 은표
-            playTick(440, now + (beatTime / 2), 0.05); // 0.5박 뒤 두 번째 은표
+            playDrumSample('snare', now);
+            playDrumSample('snare', now + (beatTime / 2));
         } else if (note.type === '16-16') {
-            playTick(550, now, 0.03); // 16분음표는 살짝 높은 음으로 구분
-            playTick(550, now + (beatTime / 4), 0.03); // 0.25박 뒤 두 번째 은표
+            playDrumSample('hihat', now);
+            playDrumSample('hihat', now + (beatTime / 4));
         }
 
         now += note.len * beatTime;
-        // 음표의 길이가 끝나면 불빛 제거
-        setTimeout(() => el.classList.remove('active-note'), (now - audioCtx.currentTime) * 1000);
+        setTimeout(() => el.classList.remove('beat-active'), (now - audioCtx.currentTime) * 1000);
         
-        // 자바스크립트 대기 로직 적용
         await new Promise(r => setTimeout(r, note.len * beatTime * 1000));
     }
-    btn.disabled = false;
+    
+    // 연주 종료 후 제어 해제
+    playBtn.disabled = false;
+    undoBtn.disabled = false;
+    resetBtn.disabled = false;
 }
 
-// 컨트롤 버튼 리스너 바인딩
+// ↩️ UNDO(되돌리기) 로직 구현
+document.getElementById('undoBtn').onclick = () => {
+    if (sequence.length === 0) return;
+    
+    const lastNote = sequence.pop(); // 마지막 요소 추출 및 제거
+    totalBeats -= lastNote.len;     // 마지막 박자 수 빼기
+    render();
+};
+
 document.getElementById('playBtn').onclick = playRhythm;
 document.getElementById('resetBtn').onclick = () => {
-    sequence = [];
-    totalBeats = 0;
+    sequence = []; 
+    totalBeats = 0; 
     render();
 };
