@@ -1,15 +1,16 @@
 // script.js
 
-const measure = document.getElementById("measure");
-
-const beatDisplay =
-  document.getElementById("beatDisplay");
+const measure =
+  document.getElementById("measure");
 
 const bpmSlider =
   document.getElementById("tempo");
 
 const bpmValue =
   document.getElementById("bpmValue");
+
+const beatDisplay =
+  document.getElementById("beatDisplay");
 
 const playBtn =
   document.getElementById("playBtn");
@@ -20,6 +21,9 @@ const undoBtn =
 const clearBtn =
   document.getElementById("clearBtn");
 
+const playhead =
+  document.getElementById("playhead");
+
 const noteButtons =
   document.querySelectorAll(".note-btn");
 
@@ -27,49 +31,58 @@ let rhythm = [];
 
 let totalBeats = 0;
 
-// 음표 정보
+/* 음표 데이터 */
+
 const noteData = {
 
   quarter:{
     beats:1,
     symbol:"♩",
-    name:"4분음표"
+    name:"4분음표",
+    width:"w1"
   },
 
   quarterRest:{
     beats:1,
     symbol:"𝄽",
-    name:"4분쉼표"
+    name:"4분쉼표",
+    width:"w1"
   },
 
   eighthRest:{
     beats:0.5,
     symbol:"𝄾",
-    name:"8분쉼표"
+    name:"8분쉼표",
+    width:"w05"
   },
 
   eighthSingle:{
     beats:0.5,
     symbol:"♪",
-    name:"8분음표 1개"
+    name:"8분음표",
+    width:"w05"
   },
 
   eighthPair:{
     beats:1,
     symbol:"♪♪",
-    name:"8분음표 2개"
+    name:"8분음표 2개",
+    width:"w1"
   },
 
   sixteenthPair:{
     beats:0.5,
     symbol:"♬",
-    name:"16분음표 2개"
+    name:"16분음표 2개",
+    width:"w05"
   }
 
 };
 
-// 드럼 사운드
-const drum = new Tone.MembraneSynth({
+/* 드럼 */
+
+const drum =
+  new Tone.MembraneSynth({
 
   pitchDecay:0.02,
 
@@ -87,8 +100,10 @@ const drum = new Tone.MembraneSynth({
 
 }).toDestination();
 
-// 메트로놈 사운드
-const metro = new Tone.MetalSynth({
+/* 메트로놈 */
+
+const metro =
+  new Tone.MetalSynth({
 
   frequency:200,
 
@@ -105,15 +120,19 @@ const metro = new Tone.MetalSynth({
 
 }).toDestination();
 
-// BPM 표시
-bpmSlider.addEventListener("input",()=>{
+/* BPM */
+
+bpmSlider.addEventListener(
+  "input",
+  ()=>{
 
   bpmValue.textContent =
     bpmSlider.value;
 
 });
 
-// 박자 표시 업데이트
+/* 박자 표시 */
+
 function updateBeatDisplay(){
 
   beatDisplay.textContent =
@@ -121,13 +140,20 @@ function updateBeatDisplay(){
 
 }
 
-// 음표 생성
-function createNoteBlock(data){
+/* 음표 생성 */
+
+function createNoteBlock(type){
+
+  const data = noteData[type];
 
   const div =
     document.createElement("div");
 
-  div.className = "note-block";
+  div.classList.add(
+    "note-block",
+    type,
+    data.width
+  );
 
   div.innerHTML = `
     <div class="note-symbol">
@@ -142,26 +168,13 @@ function createNoteBlock(data){
   measure.appendChild(div);
 }
 
-// 메트로놈 불빛
-function highlightBeat(beat){
+/* 음표 추가 */
 
-  document
-    .querySelectorAll(".beat-box")
-    .forEach(box => {
-
-      box.classList.remove("active");
-
-    });
-
-  document
-    .getElementById(`beat${beat}`)
-    .classList.add("active");
-}
-
-// 음표 추가
 noteButtons.forEach(btn=>{
 
-  btn.addEventListener("click",()=>{
+  btn.addEventListener(
+    "click",
+    ()=>{
 
     const type =
       btn.dataset.type;
@@ -169,9 +182,14 @@ noteButtons.forEach(btn=>{
     const data =
       noteData[type];
 
-    if(totalBeats + data.beats > 4){
+    if(
+      totalBeats +
+      data.beats > 4
+    ){
 
-      alert("4/4박자를 초과했어요!");
+      alert(
+        "4/4박자를 초과했어요!"
+      );
 
       return;
     }
@@ -180,7 +198,7 @@ noteButtons.forEach(btn=>{
 
     totalBeats += data.beats;
 
-    createNoteBlock(data);
+    createNoteBlock(type);
 
     updateBeatDisplay();
 
@@ -188,8 +206,11 @@ noteButtons.forEach(btn=>{
 
 });
 
-// Undo
-undoBtn.addEventListener("click",()=>{
+/* Undo */
+
+undoBtn.addEventListener(
+  "click",
+  ()=>{
 
   if(rhythm.length === 0)
     return;
@@ -208,20 +229,26 @@ undoBtn.addEventListener("click",()=>{
 
 });
 
-// 전체 삭제
-clearBtn.addEventListener("click",()=>{
+/* 전체삭제 */
+
+clearBtn.addEventListener(
+  "click",
+  ()=>{
 
   rhythm = [];
 
   totalBeats = 0;
 
-  measure.innerHTML = "";
+  measure.innerHTML = `
+    <div id="playhead"></div>
+  `;
 
   updateBeatDisplay();
 
 });
 
-// 재생
+/* 재생 */
+
 playBtn.addEventListener(
   "click",
   async ()=>{
@@ -243,17 +270,46 @@ playBtn.addEventListener(
   const quarterTime =
     60 / bpm;
 
+  const blocks =
+    document.querySelectorAll(".note-block");
+
   let currentTime = 0;
 
-  // 메트로놈 4박
-  for(let i=1; i<=4; i++){
+  /* 플레이헤드 */
+
+  playhead.style.opacity = 1;
+
+  playhead.animate(
+
+    [
+      {
+        left:"0%"
+      },
+
+      {
+        left:"100%"
+      }
+
+    ],
+
+    {
+      duration:
+        quarterTime *
+        4 *
+        1000,
+
+      easing:"linear"
+    }
+
+  );
+
+  /* 메트로놈 */
+
+  for(let beat=1; beat<=4; beat++){
 
     setTimeout(()=>{
 
-      highlightBeat(i);
-
-      // 첫박 강세
-      if(i === 1){
+      if(beat === 1){
 
         metro.triggerAttackRelease(
           "C6",
@@ -269,13 +325,36 @@ playBtn.addEventListener(
 
       }
 
-    }, currentTime * 1000);
+    }, (beat - 1)
+      * quarterTime
+      * 1000);
 
-    currentTime += quarterTime;
   }
 
-  // 리듬 재생
-  rhythm.forEach(type=>{
+  /* 리듬 재생 */
+
+  rhythm.forEach((type,index)=>{
+
+    const block =
+      blocks[index];
+
+    setTimeout(()=>{
+
+      document
+        .querySelectorAll(".note-block")
+        .forEach(b=>{
+
+          b.classList.remove(
+            "playing"
+          );
+
+        });
+
+      block.classList.add(
+        "playing"
+      );
+
+    }, currentTime * 1000);
 
     switch(type){
 
@@ -333,7 +412,8 @@ playBtn.addEventListener(
           quarterTime / 2
         );
 
-        currentTime += quarterTime;
+        currentTime +=
+          quarterTime;
 
         break;
 
