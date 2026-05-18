@@ -3,52 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🥁 리듬 창작소 (Tempo 88)</title>
+    <title>🥁 4/4박자 리듬 창작 도구</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎶 4/4박자 리듬 창작 도구</h1>
-            <div class="tempo-info">현재 속도: ♩ = 88</div>
+            <h1>🎶 4/4박자 리듬 창작소</h1>
         </header>
 
+        <div class="tempo-control-container">
+            <label for="bpm-slider">⏱️ 속도 조절 (BPM)</label>
+            <div class="slider-wrapper">
+                <span>70</span>
+                <input type="range" id="bpm-slider" min="70" max="120" value="88">
+                <span>120</span>
+            </div>
+            <div class="current-bpm-display">현재 속도: <span id="bpm-value">88</span></div>
+        </div>
+
+        <div class="beat-status">
+            남은 공간: <span id="remaining-beats">4.0</span> / 4.0 박자
+        </div>
+
         <div class="note-palette">
-            <button class="note-item" data-type="4" data-beats="1">
+            <button class="note-item n1" data-type="4" data-len="1">
                 <div class="note-img">♩</div>
                 <span>4분음표</span>
             </button>
-            <button class="note-item" data-type="4r" data-beats="1">
-                <div class="note-img">𝄽</div>
-                <span>4분쉼표</span>
-            </button>
-            <button class="note-item" data-type="8-8" data-beats="1">
-                <div class="note-img">♫</div>
-                <span>8분음표 2개</span>
-            </button>
-            <button class="note-item" data-type="8" data-beats="0.5">
+            <button class="note-item n2" data-type="8" data-len="0.5">
                 <div class="note-img">♪</div>
                 <span>8분음표 1개</span>
             </button>
-            <button class="note-item" data-type="8r" data-beats="0.5">
-                <div class="note-img">𝄾</div>
-                <span>8분쉼표</span>
+            <button class="note-item n3" data-type="8-8" data-len="1">
+                <div class="note-img">♫</div>
+                <span>8분음표 2개</span>
             </button>
-            <button class="note-item" data-type="16" data-beats="1">
+            <button class="note-item n4" data-type="16-16" data-len="0.5">
                 <div class="note-img">♬</div>
                 <span>16분음표 2개</span>
             </button>
         </div>
 
-        <div class="workspace-section">
-            <div class="beat-counter">박자 충전: <span id="current-beats">0</span> / 4 박</div>
-            <div id="rhythm-board" class="rhythm-board">
+        <div class="workspace">
+            <div id="rhythm-sequence" class="sequence-container">
                 </div>
         </div>
 
         <div class="controls">
-            <button id="playBtn" class="btn play">▶️ 리듬 연주하기</button>
-            <button id="resetBtn" class="btn reset">🔄 다시 만들기</button>
+            <button id="playBtn" class="btn play-btn">▶️ 리듬 연주하기</button>
+            <button id="resetBtn" class="btn reset-btn">🔄 다시 만들기</button>
         </div>
     </div>
     <script src="script.js"></script>
