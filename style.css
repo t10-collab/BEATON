@@ -1,202 +1,244 @@
 :root {
-    --bg-gradient-start: #fdfbfb;
-    --bg-gradient-end: #ebedee;
-    --card-bg: #ffffff;
-    --text-main: #4a5568;
+    --bg-dark: #1e222b;
+    --panel-dark: #282c34;
+    --text-light: #e2e8f0;
+    --text-dim: #bbc2cf;
     
-    /* 음표별 파스텔 색상 매칭 */
-    --p-4n: #ffb7b2;    /* 4분음표 (살구빛 핑크) */
-    --p-8n: #b5ead7;    /* 8분음표 1개 (민트 그린) */
-    --p-8-8: #e2f0cb;   /* 8분음표 2개 (연두빛 그린) */
-    --p-16n: #e0bbe4;   /* 16분음표 2개 (은은한 라벤더) */
-    
-    --btn-play: #95d5b2;
-    --btn-reset: #f08080;
-    --active-border: #ffcf4d;
+    /* 화려한 네온 파스텔 색상 */
+    --neon-pink: #ff79c6;
+    --neon-orange: #ffb86c;
+    --neon-green: #50fa7b;
+    --neon-cyan: #8be9fd;
+    --neon-purple: #bd93f9;
 }
 
 body {
-    background-image: linear-gradient(120deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-    color: var(--text-main);
-    font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
 }
 
-.container {
-    background: var(--card-bg);
-    padding: 35px;
-    border-radius: 30px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+.studio-container {
+    background: var(--panel-dark);
     width: 90%;
-    max-width: 750px;
+    max-width: 900px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid #3e4451;
+}
+
+/* 헤더 디자인 */
+.studio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #3e4451;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.logo-zone h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    font-weight: 800;
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.live-indicator {
+    font-size: 0.75rem;
+    color: #ff5555;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* 템포 제어 콘솔 */
+.tempo-console {
+    background: #21252b;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid #3e4451;
     text-align: center;
 }
 
-header h1 {
-    font-size: 1.8rem;
-    color: #5c6b73;
-    margin-top: 0;
-    margin-bottom: 20px;
+.console-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 5px;
+    letter-spacing: 1px;
 }
 
-/* 속도 조절 스타일 */
-.tempo-control-container {
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    border: 1px solid #e2e8f0;
-}
-
-.tempo-control-container label {
-    font-weight: bold;
-    color: #718096;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.slider-wrapper {
+.slider-box {
     display: flex;
     align-items: center;
-    gap: 15px;
-    justify-content: center;
+    gap: 10px;
+    font-size: 0.8rem;
 }
 
 input[type="range"] {
-    width: 60%;
-    accent-color: var(--btn-play);
+    width: 120px;
+    accent-color: var(--neon-cyan);
     cursor: pointer;
 }
 
-.current-bpm-display {
-    margin-top: 8px;
-    font-size: 1rem;
+.bpm-display {
+    font-size: 1.1rem;
     font-weight: bold;
+    color: var(--neon-green);
+    margin-top: 3px;
 }
 
-#bpm-value {
-    color: var(--btn-reset);
-}
-
-/* 박자 상태창 */
-.beat-status {
-    background: #edf2f7;
-    padding: 10px;
-    border-radius: 15px;
-    font-weight: bold;
-    margin-bottom: 25px;
-    color: #4a5568;
-}
-
-/* 음표 선택 영역 */
-.note-palette {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.note-item {
-    border: none;
-    border-radius: 18px;
-    padding: 15px;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-}
-
-.note-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.06);
-}
-
-.note-item:active { transform: scale(0.97); }
-
-.n1 { background-color: var(--p-4n); }
-.n2 { background-color: var(--p-8n); }
-.n3 { background-color: var(--p-8-8); }
-.n4 { background-color: var(--p-16n); }
-
-.note-img {
-    font-size: 3.5rem;
-    color: #2d3748;
-    margin-bottom: 5px;
-}
-
-.note-item span {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: rgba(0, 0, 0, 0.5);
-}
-
-/* 창작 공간 */
-.workspace {
-    margin: 30px 0;
+/* 모니터 및 트랙 섹션 */
+.monitor-section {
+    background: #21252b;
+    border-radius: 14px;
     padding: 20px;
-    min-height: 110px;
-    background: #f8fafc;
-    border: 3px dashed #cbd5e1;
-    border-radius: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #3e4451;
 }
 
-.sequence-container {
+.status-bar {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.progress-track {
+    width: 60%;
+    height: 8px;
+    background: #1e222b;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--neon-green);
+    transition: width 0.1s linear;
+}
+
+.master-track {
+    background: #1a1c23;
+    padding: 15px;
+    border-radius: 10px;
+    min-height: 110px;
+    border-left: 5px solid var(--neon-purple);
+}
+
+.track-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.sequence-display {
+    display: flex;
     gap: 10px;
-    justify-content: center;
+    flex-wrap: wrap;
 }
 
 /* 배치된 음표 스타일 */
-.placed-note {
-    background: white;
-    padding: 10px 20px;
-    border-radius: 15px;
-    font-size: 2.5rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.04);
-    border: 3px solid transparent;
+.placed-card {
+    background: #282c34;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 2.2rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    min-width: 60px;
-    height: 60px;
-}
-
-/* 재생 시 노랗게 반짝이는 애니메이션 효과 */
-.active-note {
-    border-color: var(--active-border) !important;
-    background: #fffdf5 !important;
-    transform: scale(1.08);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border: 2px solid transparent;
     transition: all 0.1s;
 }
 
-/* 하단 연주 버튼 */
-.controls {
-    margin-top: 15px;
+/* 재생 애니메이션 효과 */
+.beat-active {
+    transform: scale(1.08);
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px var(--neon-green);
+    background: #2f3640;
 }
 
-.btn {
-    padding: 15px 35px;
-    border-radius: 50px;
-    border: none;
-    font-size: 1.1rem;
-    font-weight: bold;
+/* 컴포넌트 팔레트 영역 */
+.section-title {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.note-palette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.note-card {
+    background: #21252b;
+    border: 1px solid #3e4451;
+    border-radius: 12px;
+    padding: 15px 10px;
     cursor: pointer;
-    color: white;
-    margin: 0 8px;
-    transition: background 0.2s, transform 0.1s;
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s ease;
 }
 
-.play-btn { background: var(--btn-play); box-shadow: 0 4px 12px rgba(149, 213, 178, 0.3); }
-.play-btn:hover { background: #81c7a1; }
+.note-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
 
-.reset-btn { background: var(--btn-reset); box-shadow: 0 4px 12px rgba(240, 128, 128, 0.3); }
-.reset-btn:hover { background: #e57373; }
+.note-symbol { font-size: 2.5rem; margin-bottom: 5px; text-shadow: 0 0 8px rgba(255,255,255,0.2); }
+.note-name { font-size: 0.8rem; font-weight: bold; margin-bottom: 2px; }
+.note-meta { font-size: 0.7rem; color: var(--text-dim); }
 
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn:active { transform: scale(0.95); }
+/* 카드별 컬러 테두리 고유화 */
+.c-4n:hover { border-color: var(--neon-pink); }
+.c-4r:hover { border-color: var(--neon-orange); }
+.c-8r:hover { border-color: var(--neon-cyan); }
+.c-8-8:hover { border-color: var(--neon-green); }
+.c-16-16:hover { border-color: var(--neon-purple); }
+
+/* 하단 마스터 버튼 제어 */
+.studio-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    border-top: 1px solid #3e4451;
+    padding-top: 20px;
+}
+
+.ctrl-btn {
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-play { background: var(--neon-green); color: #1e222b; box-shadow: 0 4px 15px rgba(80,250,123,0.3); }
+.btn-play:hover { background: #40c762; }
+.btn-undo { background: #4b5263; color: white; }
+.btn-undo:hover { background: #5c6370; }
+.btn-reset { background: #ff5555; color: white; }
+.btn-reset:hover { background: #e04444; }
+
+.ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
